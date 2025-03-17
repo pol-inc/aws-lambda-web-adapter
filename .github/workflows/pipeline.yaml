@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
 
       - name: Install stable toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -57,12 +57,12 @@ jobs:
           components: clippy, rustfmt
           targets: x86_64-unknown-linux-musl,aarch64-unknown-linux-musl
 
-      - uses: korandoru/setup-zig@v1
+      - uses: korandoru/setup-zig@c1a533bcbce8c31ca826fd771dfce53deaf1ca77 # v1.7.0
         with:
           zig-version: 0.11.0
 
       - name: Configure cache
-        uses: mozilla-actions/sccache-action@v0.0.3
+        uses: mozilla-actions/sccache-action@8417cffc2ec64127ad83077aceaa8631f7cdc83e # v0.0.3
 
       - uses: taiki-e/install-action@nextest
 
@@ -79,30 +79,30 @@ jobs:
     needs: [ test ]
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
           python-version: "3.8"
 
-      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/setup-sam@819220f63fb333a9a394dd0a5cab2d8303fd17e2 # v2
 
       - name: Install stable toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: x86_64-unknown-linux-musl,aarch64-unknown-linux-musl
 
-      - uses: korandoru/setup-zig@v1
+      - uses: korandoru/setup-zig@c1a533bcbce8c31ca826fd771dfce53deaf1ca77 # v1.7.0
         with:
           zig-version: 0.11.0
 
       - name: Configure cache
-        uses: mozilla-actions/sccache-action@v0.0.3
+        uses: mozilla-actions/sccache-action@8417cffc2ec64127ad83077aceaa8631f7cdc83e # v0.0.3
 
       - uses: taiki-e/install-action@nextest
 
       - name: Install Cargo Lambda
-        uses: jaxxstorm/action-install-gh-release@v1.9.0
+        uses: jaxxstorm/action-install-gh-release@f2bcf7617d36fea65f0a9d261d4947b19947956e # v1.9.0
         with:
           repo: cargo-lambda/cargo-lambda
           tag: v1.0.1
@@ -119,7 +119,7 @@ jobs:
       - name: Tar files
         run: tar -cvf build-x86_64.tar build-x86_64
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3.2.1
         with:
           name: aws-sam-build-x86_64
           path: build-x86_64.tar
@@ -130,7 +130,7 @@ jobs:
       - name: Tar files
         run: tar -cvf build-arm64.tar build-arm64
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3.2.1
         with:
           name: aws-sam-build-arm64
           path: build-arm64.tar
@@ -140,20 +140,20 @@ jobs:
     needs: [ build ]
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
           python-version: "3.8"
-      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/setup-sam@819220f63fb333a9a394dd0a5cab2d8303fd17e2 # v2
 
       - name: Assume the github runner role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-region: ${{ env.BETA_REGION }}
           role-to-assume: ${{ env.GITHUB_RUNNER_ROLE }}
 
       - name: Assume the beta pipeline user role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -162,7 +162,7 @@ jobs:
           aws-region: ${{ env.BETA_REGION }}
           role-to-assume: ${{ env.BETA_PIPELINE_EXECUTION_ROLE }}
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: aws-sam-build-x86_64
 
@@ -179,12 +179,12 @@ jobs:
             --region ${BETA_REGION} \
             --output-template-file packaged-beta-x86_64.yaml
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3.2.1
         with:
           name: packaged-beta-x86_64.yaml
           path: packaged-beta-x86_64.yaml
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: aws-sam-build-arm64
 
@@ -201,7 +201,7 @@ jobs:
             --region ${BETA_REGION} \
             --output-template-file packaged-beta-arm64.yaml
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3.2.1
         with:
           name: packaged-beta-arm64.yaml
           path: packaged-beta-arm64.yaml
@@ -230,20 +230,20 @@ jobs:
     needs: [ package-beta ]
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
           python-version: "3.8"
-      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/setup-sam@819220f63fb333a9a394dd0a5cab2d8303fd17e2 # v2
 
       - name: Assume the github runner role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-region: ${{ env.BETA_REGION }}
           role-to-assume: ${{ env.GITHUB_RUNNER_ROLE }}
 
       - name: Assume the beta pipeline user role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -256,7 +256,7 @@ jobs:
         run: |
           echo "CARGO_PKG_VERSION=$(cargo metadata --no-deps --format-version=1 | jq -r '.packages[0].version')" >> $GITHUB_ENV
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: packaged-beta-x86_64.yaml
 
@@ -272,7 +272,7 @@ jobs:
             --no-fail-on-empty-changeset \
             --role-arn ${BETA_CLOUDFORMATION_EXECUTION_ROLE}
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: packaged-beta-arm64.yaml
 
@@ -299,31 +299,31 @@ jobs:
           components: clippy, rustfmt
           targets: x86_64-unknown-linux-musl
 
-      - uses: korandoru/setup-zig@v1
+      - uses: korandoru/setup-zig@c1a533bcbce8c31ca826fd771dfce53deaf1ca77 # v1.7.0
         with:
           zig-version: 0.11.0
 
       - name: Configure cache
-        uses: mozilla-actions/sccache-action@v0.0.3
+        uses: mozilla-actions/sccache-action@8417cffc2ec64127ad83077aceaa8631f7cdc83e # v0.0.3
 
       - uses: taiki-e/install-action@nextest
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
           python-version: "3.8"
 
-      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/setup-sam@819220f63fb333a9a394dd0a5cab2d8303fd17e2 # v2
 
       - name: Assume the github runner role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-region: ${{ env.BETA_REGION }}
           role-to-assume: ${{ env.GITHUB_RUNNER_ROLE }}
 
       - name: Assume the beta pipeline user role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -344,7 +344,7 @@ jobs:
             --no-fail-on-empty-changeset \
             --role-arn ${BETA_CLOUDFORMATION_EXECUTION_ROLE}
 
-      - uses: dkershner6/aws-ssm-getparameters-action@v1
+      - uses: dkershner6/aws-ssm-getparameters-action@0fbd3a271ba44a5aa6a035c7746ffe4cf4eb04fe # v1
         with:
           parameterPairs: "/lambda-web-adapter/e2e/httpbin/zip/rest-api-endpoint      = HTTPBIN_ZIP_REST_ENDPOINT,
                              /lambda-web-adapter/e2e/httpbin/zip/http-api-endpoint      = HTTPBIN_ZIP_HTTP_ENDPOINT,
@@ -370,31 +370,31 @@ jobs:
           components: clippy, rustfmt
           targets: x86_64-unknown-linux-musl
 
-      - uses: korandoru/setup-zig@v1
+      - uses: korandoru/setup-zig@c1a533bcbce8c31ca826fd771dfce53deaf1ca77 # v1.7.0
         with:
           zig-version: 0.11.0
 
       - name: Configure cache
-        uses: mozilla-actions/sccache-action@v0.0.3
+        uses: mozilla-actions/sccache-action@8417cffc2ec64127ad83077aceaa8631f7cdc83e # v0.0.3
 
       - uses: taiki-e/install-action@nextest
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
           python-version: "3.8"
 
-      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/setup-sam@819220f63fb333a9a394dd0a5cab2d8303fd17e2 # v2
 
       - name: Assume the github runner role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-region: ${{ env.BETA_REGION }}
           role-to-assume: ${{ env.GITHUB_RUNNER_ROLE }}
 
       - name: Assume the beta pipeline user role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -416,7 +416,7 @@ jobs:
             --no-fail-on-empty-changeset \
             --role-arn ${BETA_CLOUDFORMATION_EXECUTION_ROLE}
 
-      - uses: dkershner6/aws-ssm-getparameters-action@v1
+      - uses: dkershner6/aws-ssm-getparameters-action@0fbd3a271ba44a5aa6a035c7746ffe4cf4eb04fe # v1
         with:
           parameterPairs: "/lambda-web-adapter/e2e/httpbin/oci/rest-api-endpoint      = HTTPBIN_OCI_REST_ENDPOINT,
                              /lambda-web-adapter/e2e/httpbin/oci/http-api-endpoint      = HTTPBIN_OCI_HTTP_ENDPOINT,
@@ -439,7 +439,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
       - id: set-matrix
         run: echo "matrix={\"include\":$(jq -r tostring .github/workflows/gamma.json)}" >> $GITHUB_OUTPUT
 
@@ -450,7 +450,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
       - id: set-matrix
         run: echo "matrix={\"include\":$(jq -r tostring .github/workflows/prod.json)}" >> $GITHUB_OUTPUT
   
@@ -461,7 +461,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
       - id: set-matrix
         run: echo "matrix={\"include\":$(jq -r tostring .github/workflows/cn-prod.json)}" >> $GITHUB_OUTPUT
   
@@ -472,7 +472,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
       - id: set-matrix
         run: echo "matrix={\"include\":$(jq -r tostring .github/workflows/cn-gamma.json)}" >> $GITHUB_OUTPUT
 
@@ -483,20 +483,20 @@ jobs:
     strategy:
       matrix: ${{fromJSON(needs.load-gamma-matrix.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
           python-version: "3.8"
-      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/setup-sam@819220f63fb333a9a394dd0a5cab2d8303fd17e2 # v2
 
       - name: Assume the github runner role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-region: ${{ matrix.region }}
           role-to-assume: ${{ env.GITHUB_RUNNER_ROLE }}
 
       - name: Assume the gamma pipeline user role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -505,7 +505,7 @@ jobs:
           aws-region: ${{ matrix.region }}
           role-to-assume: ${{ matrix.pipeline_execution_role }}
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: aws-sam-build-x86_64
 
@@ -522,12 +522,12 @@ jobs:
             --region ${{ matrix.region }} \
             --output-template-file packaged-gamma-x86_64-${{ matrix.region }}.yaml
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3.2.1
         with:
           name: packaged-gamma-x86_64-${{ matrix.region }}.yaml
           path: packaged-gamma-x86_64-${{ matrix.region }}.yaml
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: aws-sam-build-arm64
 
@@ -544,7 +544,7 @@ jobs:
             --region ${{ matrix.region }} \
             --output-template-file packaged-gamma-arm64-${{ matrix.region }}.yaml
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3.2.1
         with:
           name: packaged-gamma-arm64-${{ matrix.region }}.yaml
           path: packaged-gamma-arm64-${{ matrix.region }}.yaml
@@ -556,20 +556,20 @@ jobs:
     strategy:
       matrix: ${{fromJSON(needs.load-prod-matrix.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
           python-version: "3.8"
-      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/setup-sam@819220f63fb333a9a394dd0a5cab2d8303fd17e2 # v2
 
       - name: Assume the github runner role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-region: ${{ matrix.region }}
           role-to-assume: ${{ env.GITHUB_RUNNER_ROLE }}
 
       - name: Assume the prod pipeline user role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -578,7 +578,7 @@ jobs:
           aws-region: ${{ matrix.region }}
           role-to-assume: ${{ matrix.pipeline_execution_role }}
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: aws-sam-build-x86_64
 
@@ -595,12 +595,12 @@ jobs:
             --region ${{ matrix.region }} \
             --output-template-file packaged-prod-x86_64-${{ matrix.region }}.yaml
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3.2.1
         with:
           name: packaged-prod-x86_64-${{ matrix.region }}.yaml
           path: packaged-prod-x86_64-${{ matrix.region }}.yaml
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: aws-sam-build-arm64
 
@@ -617,7 +617,7 @@ jobs:
             --region ${{ matrix.region }} \
             --output-template-file packaged-prod-arm64-${{ matrix.region }}.yaml
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3.2.1
         with:
           name: packaged-prod-arm64-${{ matrix.region }}.yaml
           path: packaged-prod-arm64-${{ matrix.region }}.yaml
@@ -629,21 +629,21 @@ jobs:
     strategy:
       matrix: ${{fromJSON(needs.load-china-gamma-matrix.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
           python-version: "3.8"
-      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/setup-sam@819220f63fb333a9a394dd0a5cab2d8303fd17e2 # v2
 
       - name: Assume the github runner role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-region: ${{ matrix.region }}
           role-to-assume: ${{ env.GITHUB_RUNNER_CHINA_ROLE }}
           audience: sts.amazonaws.com.cn
 
       - name: Assume the china pipeline user role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -653,7 +653,7 @@ jobs:
           aws-region: ${{ matrix.region }}
           role-to-assume: ${{ matrix.pipeline_execution_role }}
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: aws-sam-build-x86_64
 
@@ -670,12 +670,12 @@ jobs:
             --region ${{ matrix.region }} \
             --output-template-file packaged-china-gamma-x86_64-${{ matrix.region }}.yaml
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3.2.1
         with:
           name: packaged-china-gamma-x86_64-${{ matrix.region }}.yaml
           path: packaged-china-gamma-x86_64-${{ matrix.region }}.yaml
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: aws-sam-build-arm64
 
@@ -692,7 +692,7 @@ jobs:
             --region ${{ matrix.region }} \
             --output-template-file packaged-china-gamma-arm64-${{ matrix.region }}.yaml
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3.2.1
         with:
           name: packaged-china-gamma-arm64-${{ matrix.region }}.yaml
           path: packaged-china-gamma-arm64-${{ matrix.region }}.yaml
@@ -705,21 +705,21 @@ jobs:
     strategy:
       matrix: ${{fromJSON(needs.load-china-prod-matrix.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
           python-version: "3.8"
-      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/setup-sam@819220f63fb333a9a394dd0a5cab2d8303fd17e2 # v2
 
       - name: Assume the github runner role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-region: ${{ matrix.region }}
           role-to-assume: ${{ env.GITHUB_RUNNER_CHINA_ROLE }}
           audience: sts.amazonaws.com.cn
 
       - name: Assume the china pipeline user role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -729,7 +729,7 @@ jobs:
           aws-region: ${{ matrix.region }}
           role-to-assume: ${{ matrix.pipeline_execution_role }}
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: aws-sam-build-x86_64
 
@@ -746,12 +746,12 @@ jobs:
             --region ${{ matrix.region }} \
             --output-template-file packaged-china-prod-x86_64-${{ matrix.region }}.yaml
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3.2.1
         with:
           name: packaged-china-prod-x86_64-${{ matrix.region }}.yaml
           path: packaged-china-prod-x86_64-${{ matrix.region }}.yaml
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: aws-sam-build-arm64
 
@@ -768,7 +768,7 @@ jobs:
             --region ${{ matrix.region }} \
             --output-template-file packaged-china-prod-arm64-${{ matrix.region }}.yaml
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3.2.1
         with:
           name: packaged-china-prod-arm64-${{ matrix.region }}.yaml
           path: packaged-china-prod-arm64-${{ matrix.region }}.yaml
@@ -780,7 +780,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
       - id: set-matrix
         run: echo "matrix={\"include\":$(jq -r tostring .github/workflows/gamma.json)}" >> $GITHUB_OUTPUT
 
@@ -791,20 +791,20 @@ jobs:
     strategy:
       matrix: ${{fromJSON(needs.load-gamma-matrix2.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
           python-version: "3.8"
-      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/setup-sam@819220f63fb333a9a394dd0a5cab2d8303fd17e2 # v2
 
       - name: Assume the github runner role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-region: ${{ matrix.region }}
           role-to-assume: ${{ env.GITHUB_RUNNER_ROLE }}
 
       - name: Assume the gamma pipeline user role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -817,7 +817,7 @@ jobs:
         run: |
           echo "CARGO_PKG_VERSION=$(cargo metadata --no-deps --format-version=1 | jq -r '.packages[0].version')" >> $GITHUB_ENV
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: packaged-gamma-x86_64-${{ matrix.region }}.yaml
 
@@ -833,7 +833,7 @@ jobs:
             --no-fail-on-empty-changeset \
             --role-arn ${{ matrix.cloudformation_execution_role }}
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: packaged-gamma-arm64-${{ matrix.region }}.yaml
 
@@ -857,7 +857,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
       - id: set-matrix
         run: echo "matrix={\"include\":$(jq -r tostring .github/workflows/prod.json)}" >> $GITHUB_OUTPUT
 
@@ -869,21 +869,21 @@ jobs:
     strategy:
       matrix: ${{fromJSON(needs.load-prod-matrix2.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
           python-version: "3.8"
-      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/setup-sam@819220f63fb333a9a394dd0a5cab2d8303fd17e2 # v2
 
       - name: Assume the github runner role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-region: ${{ matrix.region }}
           role-to-assume: ${{ env.GITHUB_RUNNER_ROLE }}
 
 
       - name: Assume the prod pipeline user role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -896,7 +896,7 @@ jobs:
         run: |
           echo "CARGO_PKG_VERSION=$(cargo metadata --no-deps --format-version=1 | jq -r '.packages[0].version')" >> $GITHUB_ENV
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: packaged-prod-x86_64-${{ matrix.region }}.yaml
 
@@ -912,7 +912,7 @@ jobs:
             --no-fail-on-empty-changeset \
             --role-arn ${{ matrix.cloudformation_execution_role }}
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: packaged-prod-arm64-${{ matrix.region }}.yaml
 
@@ -936,7 +936,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
       - id: set-matrix
         run: echo "matrix={\"include\":$(jq -r tostring .github/workflows/cn-gamma.json)}" >> $GITHUB_OUTPUT
 
@@ -948,21 +948,21 @@ jobs:
     strategy:
       matrix: ${{fromJSON(needs.load-china-gamma-matrix2.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
           python-version: "3.8"
-      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/setup-sam@819220f63fb333a9a394dd0a5cab2d8303fd17e2 # v2
 
       - name: Assume the github runner role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-region: ${{ matrix.region }}
           role-to-assume: ${{ env.GITHUB_RUNNER_CHINA_ROLE }}
           audience: sts.amazonaws.com.cn
 
       - name: Assume the china pipeline user role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -976,7 +976,7 @@ jobs:
         run: |
           echo "CARGO_PKG_VERSION=$(cargo metadata --no-deps --format-version=1 | jq -r '.packages[0].version')" >> $GITHUB_ENV
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: packaged-china-gamma-x86_64-${{ matrix.region }}.yaml
 
@@ -992,7 +992,7 @@ jobs:
             --no-fail-on-empty-changeset \
             --role-arn ${{ matrix.cloudformation_execution_role }}
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: packaged-china-gamma-arm64-${{ matrix.region }}.yaml
 
@@ -1017,7 +1017,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
       - id: set-matrix
         run: echo "matrix={\"include\":$(jq -r tostring .github/workflows/cn-prod.json)}" >> $GITHUB_OUTPUT
 
@@ -1029,21 +1029,21 @@ jobs:
     strategy:
       matrix: ${{fromJSON(needs.load-china-prod-matrix2.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
           python-version: "3.8"
-      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/setup-sam@819220f63fb333a9a394dd0a5cab2d8303fd17e2 # v2
 
       - name: Assume the github runner role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-region: ${{ matrix.region }}
           role-to-assume: ${{ env.GITHUB_RUNNER_CHINA_ROLE }}
           audience: sts.amazonaws.com.cn
 
       - name: Assume the china pipeline user role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -1057,7 +1057,7 @@ jobs:
         run: |
           echo "CARGO_PKG_VERSION=$(cargo metadata --no-deps --format-version=1 | jq -r '.packages[0].version')" >> $GITHUB_ENV
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: packaged-china-prod-x86_64-${{ matrix.region }}.yaml
 
@@ -1073,7 +1073,7 @@ jobs:
             --no-fail-on-empty-changeset \
             --role-arn ${{ matrix.cloudformation_execution_role }}
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: packaged-china-prod-arm64-${{ matrix.region }}.yaml
 
@@ -1096,16 +1096,16 @@ jobs:
     needs: [ deploy-prod ]
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
 
       - name: Assume the github runner role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-region: ${{ env.PROD_ECR_REGION }}
           role-to-assume: ${{ env.GITHUB_RUNNER_ROLE }}
 
       - name: Assume the prod pipeline user role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -1122,7 +1122,7 @@ jobs:
         run: |
           aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: aws-sam-build-x86_64
 
@@ -1130,7 +1130,7 @@ jobs:
         run: |
           tar -xvf build-x86_64.tar
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: aws-sam-build-arm64
 
